@@ -1,0 +1,35 @@
+id: hugo-pod
+kind: Pod
+apiVersion: v1beta1
+desiredState:
+  manifest:
+    version: v1beta1
+    containers:
+    - name: hugo
+      image: proppy/hugo
+      imagePullPolicy: PullAlways
+      env:
+      - name: SRC
+        value: /src/blog
+      - name: BUILD_DRAFT
+        value: 'true'
+      - name: BASE_URL
+        value: kube.proppy.sh
+      ports:
+      - name: hugo-server
+        containerPort: 1313
+      volumeMounts:
+      - name: content
+        mountPath: /src
+      - name: www
+        mountPath: /dest
+    volumes:
+    - name: content
+      source:
+        gitRepo:
+          repository: https://github.com/proppy/blog.git
+    - name: www
+      source:
+        emptyDir: {}
+labels:
+  name: blog
